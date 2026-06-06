@@ -7,13 +7,12 @@ Upload a bird image or provide an image URL to identify bird species and learn a
 ## App screenshots 
 
 <p align="center">
-  <img src="assets/app_screenshot_1.png alt="App Screenshot 1" width="900">
+  <img src="assets/app_screenshot_1.png" alt="App Screenshot 1" width="900">
 </p>
 
 <p align="center">
-  <img src="assets/app_screenshot_2.png alt="App Screenshot 2" width="900">
+  <img src="assets/app_screenshot_2.png" alt="App Screenshot 2" width="900">
 </p>
-
 
 ## Live Demo
 
