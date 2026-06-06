@@ -14,6 +14,10 @@ Upload a bird image or provide an image URL to identify bird species and learn a
   <img src="assets/app_screenshot_2.png" alt="App Screenshot 2" width="900">
 </p>
 
+<p align="center">
+  <img src="assets/app_screenshot_3.png" alt="App Screenshot 3" width="900">
+</p>
+
 ## Live Demo
 
 🤗 **Hugging Face Space:** https://huggingface.co/spaces/sachinprabhu007/pakshi-ai
@@ -79,6 +83,7 @@ Confidence ≥ 90% ?
 Each bird species is represented by a dedicated text (`.txt`) file containing structured information such as its common name, scientific name, habitat, diet, conservation status, description, and interesting facts. These files serve as the knowledge base for the RAG pipeline, enabling Pakshi AI to provide accurate and species-specific information.
 
 **Example (`house_sparrow.txt`):**
+Example file: [house_sparrow.txt](data/birds/house_sparrow.txt)
 
 ```text
 Name: House Sparrow
