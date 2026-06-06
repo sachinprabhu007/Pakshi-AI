@@ -295,6 +295,10 @@ st.markdown(
 <div style="text-align:center;font-size:0.85rem;color:#888;">
 Made with ❤️ by <b>Sachin Prabhu</b><br><br>
 
+<a href="https://huggingface.co/spaces/sachinprabhu007/pakshi-ai" target="_blank">🤗 Hugging Face Space</a> |
+<a href="https://github.com/sachinprabhu007/Pakshi-AI" target="_blank">GitHub Repository</a>
+</small>
+
 Powered by
 <a href="https://huggingface.co/spaces" target="_blank">🤗 Hugging Face Spaces</a> •
 <a href="https://www.langchain.com" target="_blank">LangChain</a> •
