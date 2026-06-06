@@ -4,6 +4,11 @@ Pakshi AI is an AI-powered bird identification and learning assistant.
 
 Upload a bird image or provide an image URL to identify bird species and learn about their habitat, diet, conservation status, and interesting facts.
 
+## Live Demo
+
+🤗 **Hugging Face Space:** https://huggingface.co/spaces/sachinprabhu007/pakshi-ai
+
+
 ## Features
 
 * 🖼️ Bird species identification from images
@@ -42,7 +47,7 @@ Knowledge Available?
 * FAISS
 * Groq
 * Google Gemini
-* Render
+* Hugging Face Spaces
 
 ## Setup
 
@@ -96,9 +101,12 @@ python scripts/build_vector_db.py
 
 ## Deployment
 
-Pakshi AI can be deployed on Render.
+Pakshi AI is deployed on Hugging Face Spaces.
 
-Configure the following environment variables:
+🔗 Live Demo: https://huggingface.co/spaces/sachinprabhu007/pakshi-ai
+
+### Environment Variables
+Configure in Hugging Face Space Settings:
 
 * GROQ_API_KEY
 * GOOGLE_API_KEY
@@ -110,7 +118,7 @@ pakshi_ai/
 ├── app.py
 ├── README.md
 ├── requirements.txt
-├── render.yaml
+├── .env.example
 │
 ├── assets/
 │   ├── eagle.jpg
@@ -132,9 +140,11 @@ pakshi_ai/
 │   ├── rag.py
 │   └── vector_store.py
 │
-└── vector_db/
-    ├── index.faiss
-    └── index.pkl
+├── vector_db/
+│   ├── index.faiss
+│   └── index.pkl
+│
+└── .gitignore
 ```
 
 ### Key Components
