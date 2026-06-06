@@ -4,6 +4,17 @@ Pakshi AI is an AI-powered bird identification and learning assistant.
 
 Upload a bird image or provide an image URL to identify bird species and learn about their habitat, diet, conservation status, and interesting facts.
 
+## App screenshots 
+
+<p align="center">
+  <img src="assets/app_screenshot_1.png alt="App Screenshot 1" width="900">
+</p>
+
+<p align="center">
+  <img src="assets/app_screenshot_2.png alt="App Screenshot 1" width="900">
+</p>
+
+
 ## Live Demo
 
 🤗 **Hugging Face Space:** https://huggingface.co/spaces/sachinprabhu007/pakshi-ai
