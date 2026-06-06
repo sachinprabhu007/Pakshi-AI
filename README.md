@@ -74,6 +74,37 @@ Confidence ≥ 90% ?
    Display Results
 ```
 
+### 📄 Species Knowledge Files
+
+Each bird species is represented by a dedicated text (`.txt`) file containing structured information such as its common name, scientific name, habitat, diet, conservation status, description, and interesting facts. These files serve as the knowledge base for the RAG pipeline, enabling Pakshi AI to provide accurate and species-specific information.
+
+**Example (`house_sparrow.txt`):**
+
+```text
+Name: House Sparrow
+
+Scientific Name: Passer domesticus
+
+Habitat:
+Urban and rural settlements.
+
+Diet:
+Grains, seeds and insects.
+
+Conservation Status:
+Least Concern
+
+Description:
+The House Sparrow is a small bird commonly found near human habitation.
+
+Interesting Facts:
+- One of the most widespread bird species in the world.
+- Often nests in buildings and roof spaces.
+```
+
+**Conservation Status** indicates the risk of extinction of a species according to the IUCN Red List. For example, the House Sparrow is classified as **Least Concern**, meaning it is widespread and abundant globally. Other possible categories include Near Threatened, Vulnerable, Endangered, Critically Endangered, Extinct in the Wild, and Extinct.
+
+
 ## Tech Stack
 
 * Streamlit
