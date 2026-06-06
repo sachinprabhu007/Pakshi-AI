@@ -1,16 +1,25 @@
+print("=== APP STARTED ===", flush=True)
 import streamlit as st
-import requests
+print("=== STREAMLIT IMPORTED ===", flush=True)
 
+
+import requests
 from io import BytesIO
 from PIL import Image
 from pathlib import Path
 
+print("=== BASIC IMPORTS OK ===", flush=True)
+
 from src.classifier import detect_bird
+
+print("=== CLASSIFIER IMPORTED ===", flush=True)
+
 from src.rag import (
     answer_question,
     answer_from_gemini
 )
 
+print("=== RAG IMPORTED ===", flush=True)
 
 def bird_exists(species):
     species = (
