@@ -5,24 +5,24 @@
 # print("transformers imported", flush=True)
 
 # Minimum confidence required to accept a prediction
-CONFIDENCE_THRESHOLD = 0.90
+# CONFIDENCE_THRESHOLD = 0.90
 
 
 # @st.cache_resource
-def get_classifier():
-    """
-    Load and cache the bird classification model.
-    """
+# def get_classifier():
+#     """
+#     Load and cache the bird classification model.
+#     """
 
-    print(
-        "Loading bird classifier...",
-        flush=True
-    )
+#     print(
+#         "Loading bird classifier...",
+#         flush=True
+#     )
 
-    return pipeline(
-        "image-classification",
-        model="chriamue/bird-species-classifier"
-    )
+#     return pipeline(
+#         "image-classification",
+#         model="chriamue/bird-species-classifier"
+#     )
 
 def detect_bird(image):
     return (
