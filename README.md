@@ -21,22 +21,43 @@ Upload a bird image or provide an image URL to identify bird species and learn a
 ## Architecture
 
 ```text
-Image / URL
+User
+ ↓
+Streamlit Frontend
+ ↓
+Application Backend (Hugging Face Space)
+ ↓
+Load Image (Upload or URL)
+ ↓
+Bird Classifier (Hugging Face Model)
+ ↓
+Confidence ≥ 90% ?
+
+├── No
+│     ↓
+│   Show Top Predictions
+│   Request Better Image
+│
+└── Yes
       ↓
-Bird Classifier (Hugging Face)
-      ↓
-Detected Species
-      ↓
-Knowledge Available?
+   Knowledge Base Available?
+
    ├── Yes
-   │      ↓
+   │     ↓
    │   FAISS Retrieval
-   │      ↓
-   │     Groq
+   │     ↓
+   │   Groq LLM (RAG)
+   │     ↓
+   │   Grounded Response
    │
    └── No
-          ↓
-       Gemini
+         ↓
+       Gemini LLM
+         ↓
+       AI-Generated Response
+
+      ↓
+   Display Results
 ```
 
 ## Tech Stack
