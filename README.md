@@ -171,6 +171,44 @@ Pakshi AI is deployed on Hugging Face Spaces.
 
 🔗 Live Demo: https://huggingface.co/spaces/sachinprabhu007/pakshi-ai
 
+
+## 🌿 Branch Strategy
+
+This project maintains two branches for different purposes:
+
+* **`main`** – Primary development branch containing the complete source code, documentation, screenshots, architecture diagrams, and other repository assets.
+* **`hf-deploy`** – Deployment branch used for Hugging Face Spaces. To keep the deployment lightweight and focused on the application code, documentation assets such as screenshots and diagrams from the `assets/` directory are omitted.
+
+As a result, some images and documentation elements available in the GitHub repository may not be present in the Hugging Face Spaces deployment.
+
+
+## 🚀 Hugging Face Spaces Deployment
+
+To deploy Pakshi AI on Hugging Face Spaces, you will need:
+
+1. A Hugging Face account.
+2. A Hugging Face Space configured with the Streamlit SDK.
+3. Required API keys added as Space Secrets:
+
+   * `GROQ_API_KEY`
+   * `GOOGLE_API_KEY` (if using Gemini)
+4. The deployment branch (`hf-deploy`) pushed to your Hugging Face Space repository.
+
+### Setting Up Secrets
+
+In your Hugging Face Space:
+
+**Settings → Repository Secrets**
+
+Add the required API keys as secrets so they are securely available to the application at runtime.
+
+For more details, refer to:
+
+* Hugging Face Spaces: https://huggingface.co/spaces
+* Spaces Configuration Reference: https://huggingface.co/docs/hub/spaces-config-reference
+* Managing Secrets: https://huggingface.co/docs/hub/spaces-overview#managing-secrets
+
+
 ### Environment Variables
 Configure in Hugging Face Space Settings:
 
