@@ -8,7 +8,6 @@ Upload a bird image or provide an image URL to identify bird species and learn a
 
 🤗 **Hugging Face Space:** https://huggingface.co/spaces/sachinprabhu007/pakshi-ai
 
-
 ## Features
 
 * 🖼️ Bird species identification from images
@@ -19,6 +18,11 @@ Upload a bird image or provide an image URL to identify bird species and learn a
 * ⚡ Powered by Groq and Google Gemini
 
 ## Architecture
+
+<p align="center">
+  <img src="assets/pakshi_ai_uml_diagram.png" alt="Pakshi AI Architecture Diagram" width="900">
+</p>
+
 
 ```text
 User
