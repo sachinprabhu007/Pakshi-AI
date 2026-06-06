@@ -11,7 +11,8 @@ load_dotenv()
 # LLM used for Retrieval-Augmented Generation (RAG)
 groq_llm = ChatGroq(
     model="llama-3.1-8b-instant",
-    temperature=0
+    temperature=0,
+    max_tokens=250
 )
 
 # Fallback LLM for bird species not present in the knowledge base
