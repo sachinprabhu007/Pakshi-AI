@@ -8,7 +8,7 @@
 CONFIDENCE_THRESHOLD = 0.90
 
 
-@st.cache_resource
+# @st.cache_resource
 def get_classifier():
     """
     Load and cache the bird classification model.
