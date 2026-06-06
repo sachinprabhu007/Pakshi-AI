@@ -290,18 +290,19 @@ st.divider()
 
 st.markdown(
     """
-<small>
+<hr style="margin-top:2rem;margin-bottom:1rem;">
+
+<div style="text-align:center;font-size:0.85rem;color:#888;">
 Made with ❤️ by <b>Sachin Prabhu</b><br><br>
 
 Powered by
-<a href="https://huggingface.co" target="_blank">Hugging Face</a> •
+<a href="https://huggingface.co/spaces" target="_blank">🤗 Hugging Face Spaces</a> •
 <a href="https://www.langchain.com" target="_blank">LangChain</a> •
 <a href="https://faiss.ai" target="_blank">FAISS</a> •
 <a href="https://groq.com" target="_blank">Groq</a> •
 <a href="https://ai.google.dev" target="_blank">Gemini</a> •
-<a href="https://streamlit.io" target="_blank">Streamlit</a> •
-<a href="https://render.com" target="_blank">Render</a>
-</small>
+<a href="https://streamlit.io" target="_blank">Streamlit</a>
+</div>
 """,
     unsafe_allow_html=True
 )
