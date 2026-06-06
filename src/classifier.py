@@ -1,71 +1,61 @@
-# from transformers import pipeline
-# import streamlit as st
+from transformers import pipeline
+import streamlit as st
 
-# print("classifier.py imported", flush=True)
-# print("transformers imported", flush=True)
 
 # Minimum confidence required to accept a prediction
-# CONFIDENCE_THRESHOLD = 0.90
+CONFIDENCE_THRESHOLD = 0.90
 
 
-# @st.cache_resource
-# def get_classifier():
-#     """
-#     Load and cache the bird classification model.
-#     """
+@st.cache_resource
+def get_classifier():
+    """
+    Load and cache the bird classification model.
+    """
 
-#     print(
-#         "Loading bird classifier...",
-#         flush=True
-#     )
-
-#     return pipeline(
-#         "image-classification",
-#         model="chriamue/bird-species-classifier"
-#     )
-
-def detect_bird(image):
-    return (
-        "PEACOCK",
-        0.99,
-        [
-            ("PEACOCK", 0.99)
-        ]
+    print(
+        "Loading bird classifier...",
+        flush=True
     )
 
-# def detect_bird(image):
-#     """
-#     Detect the bird species from an input image.
-#     """
+    return pipeline(
+        "image-classification",
+        model="chriamue/bird-species-classifier"
+    )
 
-#     classifier = get_classifier()
 
-#     results = classifier(image)
+def detect_bird(image):
+    """
+    Detect the bird species from an input image.
+    """
 
-#     # Store top predictions for display in the UI
-#     top_predictions = [
-#         (
-#             pred["label"].upper(),
-#             pred["score"]
-#         )
-#         for pred in results[:5]
-#     ]
+    classifier = get_classifier()
 
-#     best = results[0]
+    results = classifier(image)
 
-#     species = best["label"].upper().strip()
-#     confidence = float(best["score"])
+    # Store top predictions for display in the UI
+    top_predictions = [
+        (
+            pred["label"].upper(),
+            pred["score"]
+        )
+        for pred in results[:5]
+    ]
 
-#     # Reject low-confidence predictions
-#     if confidence < CONFIDENCE_THRESHOLD:
-#         return (
-#             "Unknown Bird",
-#             confidence,
-#             top_predictions
-#         )
+    best = results[0]
 
-#     return (
-#         species,
-#         confidence,
-#         top_predictions
-#     )
+    species = best["label"].upper().strip()
+    confidence = float(best["score"])
+
+    # Reject low-confidence predictions
+    if confidence < CONFIDENCE_THRESHOLD:
+        return (
+            "Unknown Bird",
+            confidence,
+            top_predictions
+        )
+
+    return (
+        species,
+        confidence,
+        top_predictions
+    )
