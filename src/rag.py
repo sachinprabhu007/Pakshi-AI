@@ -6,38 +6,95 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 
+import streamlit as st
+
 load_dotenv()
 
-# LLM used for Retrieval-Augmented Generation (RAG)
-groq_llm = ChatGroq(
-    model="llama-3.1-8b-instant",
-    temperature=0,
-    max_tokens=250
+print(
+    "rag.py imported",
+    flush=True
 )
 
-# Fallback LLM for bird species not present in the knowledge base
-gemini_llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
-    temperature=0
-)
 
-# Embedding model used to vectorize bird documents
-embeddings = HuggingFaceEmbeddings(
-    model_name="all-MiniLM-L6-v2"
-)
+@st.cache_resource
+def get_groq_llm():
+    """
+    Load and cache the Groq LLM.
+    """
 
-# Load the FAISS vector database
-db = FAISS.load_local(
-    "vector_db",
-    embeddings,
-    allow_dangerous_deserialization=True
-)
+    print(
+        "Loading Groq LLM...",
+        flush=True
+    )
+
+    return ChatGroq(
+        model="llama-3.1-8b-instant",
+        temperature=0,
+        max_tokens=250
+    )
+
+
+@st.cache_resource
+def get_gemini_llm():
+    """
+    Load and cache the Gemini LLM.
+    """
+
+    print(
+        "Loading Gemini LLM...",
+        flush=True
+    )
+
+    return ChatGoogleGenerativeAI(
+        model="gemini-2.5-flash",
+        temperature=0
+    )
+
+
+@st.cache_resource
+def get_embeddings():
+    """
+    Load and cache the embedding model.
+    """
+
+    print(
+        "Loading embeddings...",
+        flush=True
+    )
+
+    return HuggingFaceEmbeddings(
+        model_name="all-MiniLM-L6-v2"
+    )
+
+
+@st.cache_resource
+def get_db():
+    """
+    Load and cache the FAISS vector database.
+    """
+
+    print(
+        "Loading FAISS database...",
+        flush=True
+    )
+
+    embeddings = get_embeddings()
+
+    return FAISS.load_local(
+        "vector_db",
+        embeddings,
+        allow_dangerous_deserialization=True
+    )
 
 
 def answer_question(species, question):
     """
     Answer questions using retrieved bird knowledge.
     """
+
+    db = get_db()
+
+    groq_llm = get_groq_llm()
 
     species_key = (
         species.lower()
@@ -113,6 +170,7 @@ I don't have enough information in the knowledge base.
 
     return response.content
 
+
 def answer_from_gemini(
     species,
     question
@@ -121,6 +179,8 @@ def answer_from_gemini(
     Fallback for bird species not available
     in the curated knowledge base.
     """
+
+    gemini_llm = get_gemini_llm()
 
     prompt = f"""
 You are a bird expert.

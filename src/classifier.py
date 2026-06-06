@@ -1,19 +1,33 @@
 from transformers import pipeline
+import streamlit as st
 
 # Minimum confidence required to accept a prediction
 CONFIDENCE_THRESHOLD = 0.90
 
-# Bird species classification model
-classifier = pipeline(
-    "image-classification",
-    model="chriamue/bird-species-classifier"
-)
+
+@st.cache_resource
+def get_classifier():
+    """
+    Load and cache the bird classification model.
+    """
+
+    print(
+        "Loading bird classifier...",
+        flush=True
+    )
+
+    return pipeline(
+        "image-classification",
+        model="chriamue/bird-species-classifier"
+    )
 
 
 def detect_bird(image):
     """
     Detect the bird species from an input image.
     """
+
+    classifier = get_classifier()
 
     results = classifier(image)
 
