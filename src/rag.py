@@ -16,7 +16,7 @@ print(
 )
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def get_groq_llm():
     """
     Load and cache the Groq LLM.
@@ -34,7 +34,7 @@ def get_groq_llm():
     )
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def get_gemini_llm():
     """
     Load and cache the Gemini LLM.
@@ -51,7 +51,7 @@ def get_gemini_llm():
     )
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def get_embeddings():
     """
     Load and cache the embedding model.
@@ -67,7 +67,7 @@ def get_embeddings():
     )
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def get_db():
     """
     Load and cache the FAISS vector database.
@@ -170,57 +170,48 @@ I don't have enough information in the knowledge base.
 
     return response.content
 
-
-def answer_from_gemini(
-    species,
-    question
-):
-    """
-    Fallback for bird species not available
-    in the curated knowledge base.
-    """
+def answer_from_gemini(species, question):
 
     gemini_llm = get_gemini_llm()
 
     prompt = f"""
 You are a bird expert.
 
-The bird species being discussed is:
+Bird: {species}
 
-{species}
+Question: {question}
 
-Answer the user's question about THIS bird species.
-
-User Question:
-{question}
-
-If the question is general (for example:
-'Tell me about it',
-'Tell me about this bird',
-'What is this bird?'),
-respond in this format:
-
-Name:
-
-Scientific Name:
-
-Habitat:
-
-Diet:
-
-Conservation Status:
-
-Description:
-
-Interesting Facts:
-- Fact 1
-- Fact 2
-
-If the question is specific, answer only that question.
+Provide a helpful, accurate answer about the bird.
 """
 
-    response = gemini_llm.invoke(
-        prompt
-    )
+    try:
 
-    return response.content
+        response = gemini_llm.invoke(prompt)
+
+        if hasattr(response, "content"):
+            return response.content
+
+        return str(response)
+
+    except Exception as e:
+
+        print(f"Gemini error: {e}")
+
+        error_text = str(e)
+
+        if (
+            "RESOURCE_EXHAUSTED" in error_text
+            or "429" in error_text
+            or "quota" in error_text.lower()
+        ):
+            return (
+                f"⚠️ {species} was identified successfully.\n\n"
+                "Detailed information for this species is temporarily unavailable.\n\n"
+                "For a full demo of Pakshi AI, try House Sparrow or Peacock images.\n\n"
+                "Please try again later for other bird species."
+            )
+        
+        return (
+            "⚠️ Unable to generate bird information at the moment. "
+            "Please try again later."
+        )
