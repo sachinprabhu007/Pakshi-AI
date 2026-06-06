@@ -6,7 +6,7 @@ import streamlit as st
 CONFIDENCE_THRESHOLD = 0.90
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def get_classifier():
     """
     Load and cache the bird classification model.

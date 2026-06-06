@@ -1,55 +1,54 @@
 print("=== APP STARTED ===", flush=True)
+
 import streamlit as st
 print("=== STREAMLIT IMPORTED ===", flush=True)
-
 
 import requests
 from io import BytesIO
 from PIL import Image
 from pathlib import Path
 
-print("=== BASIC IMPORTS OK ===", flush=True)
-
 from src.classifier import detect_bird
+from src.rag import answer_question, answer_from_gemini
 
-print("=== CLASSIFIER IMPORTED ===", flush=True)
+print("=== IMPORTS DONE ===", flush=True)
 
-from src.rag import (
-    answer_question,
-    answer_from_gemini
+
+# Config
+st.set_page_config(
+    page_title="Pakshi AI",
+    page_icon="🐦"
 )
 
-print("=== RAG IMPORTED ===", flush=True)
+# Session state init
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
+if "current_source" not in st.session_state:
+    st.session_state.current_source = None
+
+
+# Helper
 def bird_exists(species):
     species = (
         species.lower()
         .replace("-", "_")
         .replace(" ", "_")
     )
-
-    return Path(
-        f"data/birds/{species}.txt"
-    ).exists()
+    return Path(f"data/birds/{species}.txt").exists()
 
 
-# App Header
-
-st.set_page_config(
-    page_title="Pakshi AI",
-    page_icon="🐦"
-)
-
+# Header
 st.title("🐦 Pakshi AI")
 
-st.markdown(
-    """
+st.markdown("""
 ### Discover Birds with AI
 
-Upload a bird image or provide an image URL to identify species and learn about their habitat, diet, conservation status, and more.
-"""
-)
+Upload a bird image or provide an image URL to identify species and learn about them.
+""")
 
+
+# About section
 with st.expander("About Pakshi AI"):
 
     st.markdown(
@@ -67,237 +66,146 @@ about them.
 """
     )
 
-# Image Input
 
+# Image input
 input_method = st.radio(
     "Choose Image Source",
-    [
-        "Upload Image",
-        "Image URL"
-    ]
+    ["Upload Image", "Image URL"]
 )
 
 uploaded_file = None
 image_url = None
 
 if input_method == "Upload Image":
-
     uploaded_file = st.file_uploader(
         "Upload Bird Image",
         type=["jpg", "jpeg", "png"]
     )
-
 else:
 
-    image_url = st.text_input(
-        "Enter Bird Image URL"
-    )
+    col1, col2 = st.columns([5, 1])
+    with col1:
+        image_url = st.text_input(
+            "Enter Image URL"
+        )
+    with col2:
+        st.write("")
+        st.write("")
+        load_image = st.button("Send 🚀")
 
+
+# Load image
 image = None
 
 if uploaded_file:
-
     image = Image.open(uploaded_file)
 
 elif image_url:
-
     try:
-
-        response = requests.get(
-            image_url,
-            timeout=10
-        )
-
+        response = requests.get(image_url, timeout=10)
         response.raise_for_status()
-
-        image = Image.open(
-            BytesIO(response.content)
-        )
-
+        image = Image.open(BytesIO(response.content))
     except Exception:
+        st.error("Unable to load image from URL.")
 
-        st.error(
-            "Unable to load image from URL."
-        )
 
-# Bird Detection
-
+# Main logic
 if image:
 
-    st.image(
-        image,
-        caption="Bird Image",
-        width="stretch"
-    )
+    st.image(image, caption="Bird Image", width="stretch")
 
-    species, confidence, top_predictions = detect_bird(
-        image
-    )
+    species, confidence, top_predictions = detect_bird(image)
 
     if species == "Unknown Bird":
-
-        st.error(
-            f"Unable to identify the bird confidently "
-            f"(confidence: {confidence:.2%})"
-        )
+        st.error(f"Low confidence ({confidence:.2%})")
 
         with st.expander("Top Predictions"):
-
             for label, score in top_predictions:
-
-                st.write(
-                    f"**{label}** — {score:.2%}"
-                )
+                st.write(f"{label} — {score:.2%}")
 
         st.stop()
 
-    st.success(
-        f"Detected Species: {species}"
-    )
-
-    st.caption(
-        f"Confidence: {confidence:.2%}"
-    )
+    st.success(f"Detected: {species}")
+    st.caption(f"Confidence: {confidence:.2%}")
 
     with st.expander("Top Predictions"):
-
         for label, score in top_predictions:
+            st.write(f"{label} — {score:.2%}")
 
-            st.write(
-                f"**{label}** — {score:.2%}"
-            )
+    # Knowledge check
+    has_kb = bird_exists(species)
 
-    # Knowledge Source Selection
+    if not has_kb:
+        st.info("Using AI-generated knowledge.")
 
-    has_knowledge_base = bird_exists(
-        species
-    )
+    # Reset chat on new image
+    source_id = uploaded_file.name if uploaded_file else image_url
 
-    if not has_knowledge_base:
-
-        st.info(
-            "Detailed information for this species is generated using AI."
-        )
-
-    # Session State
-
-    if "messages" not in st.session_state:
-
+    if st.session_state.current_source != source_id:
         st.session_state.messages = []
-
-    if uploaded_file:
-
-        source_id = (
-            uploaded_file.name,
-            uploaded_file.size
-        )
-
-    else:
-
-        source_id = image_url
-
-    if "current_source" not in st.session_state:
-
-        st.session_state.current_source = None
-
-    if (
-        st.session_state.current_source
-        != source_id
-    ):
-
-        st.session_state.messages = []
-
-        st.session_state.current_source = (
-            source_id
-        )
+        st.session_state.current_source = source_id
 
     st.divider()
 
-    # Chat Interface
+    # Chat history
+    for msg in st.session_state.messages:
+        avatar = "👤" if msg["role"] == "user" else "🐦"
 
-    for message in st.session_state.messages:
+        with st.chat_message(msg["role"], avatar=avatar):
+            st.write(msg["content"])
 
-        avatar = (
-            "👤"
-            if message["role"] == "user"
-            else "🐦"
+    # Chat input (Enter or button submit)
+    st.markdown("### 💬 Ask about the bird")
+
+    with st.form("bird_chat_form", clear_on_submit=True):
+
+        question = st.text_input(
+            "Ask question",
+            placeholder=f"Ask about {species}",
+            label_visibility="collapsed"
         )
 
-        with st.chat_message(
-            message["role"],
-            avatar=avatar
-        ):
+        send = st.form_submit_button("Send 🚀")
 
-            st.write(
-                message["content"]
-            )
+    # Handle chat
+    if send and question:
 
-    question = st.chat_input(
-        f"Ask about {species}"
-    )
+        st.session_state.messages.append({
+            "role": "user",
+            "content": question
+        })
 
-    if question:
-
-        st.session_state.messages.append(
-            {
-                "role": "user",
-                "content": question
-            }
-        )
-
-        with st.chat_message(
-            "user",
-            avatar="👤"
-        ):
-
+        with st.chat_message("user", avatar="👤"):
             st.write(question)
 
-        with st.spinner(
-            "Searching bird knowledge..."
-        ):
+        with st.spinner("Searching knowledge..."):
 
-            if has_knowledge_base:
-
-                answer = answer_question(
-                    species,
-                    question
-                )
-
+            if has_kb:
+                answer = answer_question(species, question)
             else:
+                answer = answer_from_gemini(species, question)
 
-                answer = answer_from_gemini(
-                    species,
-                    question
-                )
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": answer
+        })
 
-        st.session_state.messages.append(
-            {
-                "role": "assistant",
-                "content": answer
-            }
-        )
-
-        with st.chat_message(
-            "assistant",
-            avatar="🐦"
-        ):
-
+        with st.chat_message("assistant", avatar="🐦"):
             st.write(answer)
 
+        st.rerun()
+
+
 # Footer
-
-st.divider()
-
-st.markdown(
-    """
+st.markdown("""
 <hr style="margin-top:2rem;margin-bottom:1rem;">
 
 <div style="text-align:center;font-size:0.85rem;color:#888;">
+
 Made with ❤️ by <b>Sachin Prabhu</b><br><br>
 
 <a href="https://huggingface.co/spaces/sachinprabhu007/pakshi-ai" target="_blank">🤗 Hugging Face Space</a> |
-<a href="https://github.com/sachinprabhu007/Pakshi-AI" target="_blank">GitHub Repository</a>
-</small>
+<a href="https://github.com/sachinprabhu007/Pakshi-AI" target="_blank">GitHub</a>
 
 Powered by
 <a href="https://huggingface.co/spaces" target="_blank">🤗 Hugging Face Spaces</a> •
@@ -306,7 +214,6 @@ Powered by
 <a href="https://groq.com" target="_blank">Groq</a> •
 <a href="https://ai.google.dev" target="_blank">Gemini</a> •
 <a href="https://streamlit.io" target="_blank">Streamlit</a>
+            
 </div>
-""",
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
