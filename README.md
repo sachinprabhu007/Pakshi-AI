@@ -267,9 +267,6 @@ pakshi_ai/
 * **assets/** – Sample bird images for testing
 * **scripts/build_vector_db.py** – Script to generate the vector database
 
-```
-```
-
 
 ## Author
 
