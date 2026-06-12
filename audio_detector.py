@@ -61,18 +61,3 @@ def detect_bird_from_audio(audio_path):
     )
 
     return results[:5]
-
-
-if __name__ == "__main__":
-    results = detect_bird_from_audio(
-        "samples/indian_peafowl.mp3"
-    )
-
-    print("\nTop Predictions:\n")
-
-    for idx, bird in enumerate(results, start=1):
-        print(
-            f"{idx}. {bird['species']} "
-            f"({bird['scientific_name']}) - "
-            f"{bird['confidence']:.2%}"
-        )
