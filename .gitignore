@@ -14,3 +14,6 @@ birdnet_output/
 
 # BirdNET model
 BirdNET_GLOBAL_6K_V2.4_Model/
+
+# Test audio samples - local only
+samples/
