@@ -5,3 +5,12 @@ __pycache__/
 .vscode/
 assets/*.jpg
 assets/*.jpeg
+
+# Audio uploads
+uploads/
+
+# BirdNET outputs
+birdnet_output/
+
+# BirdNET model
+BirdNET_GLOBAL_6K_V2.4_Model/
