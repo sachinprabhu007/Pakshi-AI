@@ -45,7 +45,7 @@ def bird_exists(species):
 #     name = species.replace(" ", "_")
 #     return f"https://en.wikipedia.org/wiki/Special:FilePath/{name}.jpg"
    
-
+@st.cache_data(ttl=86400, show_spinner=False)  # 1 day
 def get_bird_image(species):
     try:
         url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{species.replace(' ', '_')}"
