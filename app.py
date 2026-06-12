@@ -41,11 +41,37 @@ def bird_exists(species):
     )
     return Path(f"data/birds/{species}.txt").exists()
 
-def get_bird_image(species):
-    name = species.replace(" ", "_")
-    return f"https://en.wikipedia.org/wiki/Special:FilePath/{name}.jpg"
+# def get_bird_image(species):
+#     name = species.replace(" ", "_")
+#     return f"https://en.wikipedia.org/wiki/Special:FilePath/{name}.jpg"
    
-import requests
+
+def get_bird_image(species):
+    try:
+        url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{species.replace(' ', '_')}"
+
+        headers = {
+            "User-Agent": "PakshiAI/1.0"
+        }
+
+        response = requests.get(
+            url,
+            headers=headers,
+            timeout=5
+        )
+
+        print("Status:", response.status_code)
+
+        if response.status_code != 200:
+            return None
+
+        data = response.json()
+
+        return data.get("thumbnail", {}).get("source")
+
+    except Exception as e:
+        print("ERROR:", e)
+        return None
 
 def image_exists(url):
     try:
@@ -247,11 +273,14 @@ if audio_file:
         # show image
         image_url = get_bird_image(best["species"])
             
-        st.image(
+        if image_url:
+            st.image(
             image_url,
             caption=best["species"],
             width = 'stretch'
         )
+        else: 
+            st.info("Image not available")
       
         st.subheader("🎵 Top 5 Predictions")
 
