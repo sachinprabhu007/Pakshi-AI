@@ -7,11 +7,15 @@ import requests
 from io import BytesIO
 from PIL import Image
 from pathlib import Path
+import os
 
 from src.classifier import detect_bird
 from src.rag import answer_question, answer_from_gemini
-
 print("=== IMPORTS DONE ===", flush=True)
+
+from audio_detector import detect_bird_from_audio
+print("=== AUDIO IMPORTS DONE ===", flush=True)
+
 
 
 # Config
@@ -37,7 +41,19 @@ def bird_exists(species):
     )
     return Path(f"data/birds/{species}.txt").exists()
 
+def get_bird_image(species):
+    name = species.replace(" ", "_")
+    return f"https://en.wikipedia.org/wiki/Special:FilePath/{name}.jpg"
+   
+import requests
 
+def image_exists(url):
+    try:
+        r = requests.get(url, timeout=3)
+        return r.status_code == 200 and "image" in r.headers.get("Content-Type", "")
+    except:
+        return False
+    
 # Header
 st.title("🐦 Pakshi AI")
 
@@ -195,6 +211,55 @@ if image:
 
         st.rerun()
 
+st.divider()
+
+st.header("🎵 Bird Audio Identification")
+
+audio_file = st.file_uploader(
+    "Upload Bird Audio",
+    type=["mp3", "wav", "flac"],
+    key="audio_uploader"
+)
+
+if audio_file:
+
+    # Save directly into project folder
+    os.makedirs("uploads", exist_ok=True)
+
+    audio_path = f"uploads/{audio_file.name}"
+
+    with open(audio_path, "wb") as f:
+        f.write(audio_file.getbuffer())
+    st.audio(audio_path)
+
+    # Run BirdNET
+    with st.spinner("Analyzing bird sound..."):
+        results = detect_bird_from_audio(audio_path)
+
+    if not results:
+        st.error("No bird detected")
+    else:
+        best = results[0]
+
+        st.success(f"Detected: {best['species']}")
+        st.caption(f"Confidence: {best['confidence']:.2%}")
+
+        # show image
+        image_url = get_bird_image(best["species"])
+            
+        st.image(
+            image_url,
+            caption=best["species"],
+            width = 'stretch'
+        )
+      
+        st.subheader("🎵 Top 5 Predictions")
+
+        for i, bird in enumerate(results, start=1):
+            st.write(
+                f"{i}. {bird['species']} "
+                f"({bird['confidence']:.2%})"
+            )
 
 # Footer
 st.markdown("""
@@ -213,7 +278,9 @@ Powered by
 <a href="https://faiss.ai" target="_blank">FAISS</a> •
 <a href="https://groq.com" target="_blank">Groq</a> •
 <a href="https://ai.google.dev" target="_blank">Gemini</a> •
-<a href="https://streamlit.io" target="_blank">Streamlit</a>
+<a href="https://streamlit.io" target="_blank">Streamlit</a> •
+<a href="https://github.com/kahst/BirdNET-Analyzer" target="_blank">BirdNET</a> •
+<a href="https://xeno-canto.org" target="_blank">Xeno-canto</a>
             
 </div>
 """, unsafe_allow_html=True)
