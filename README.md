@@ -62,6 +62,7 @@ CSV Output (birdnet_output/)
 Parse & Extract Predictions
         ↓
 Top 5 species returned along with confidence percentages.
+```
 
 ## Architecture
 
