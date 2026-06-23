@@ -45,13 +45,22 @@ def bird_exists(species):
 #     name = species.replace(" ", "_")
 #     return f"https://en.wikipedia.org/wiki/Special:FilePath/{name}.jpg"
    
-@st.cache_data(ttl=86400, show_spinner=False)  # 1 day
+
+@st.cache_data(ttl=86400, show_spinner=False)
 def get_bird_image(species):
+    """
+    Fetch bird image from Wikipedia.
+    Returns image URL or None.
+    """
+
     try:
-        url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{species.replace(' ', '_')}"
+        url = (
+            f"https://en.wikipedia.org/api/rest_v1/page/summary/"
+            f"{species.replace(' ', '_')}"
+        )
 
         headers = {
-            "User-Agent": "PakshiAI/1.0"
+            "User-Agent": "PakshiAI-2.0.1"
         }
 
         response = requests.get(
@@ -60,25 +69,26 @@ def get_bird_image(species):
             timeout=5
         )
 
-        print("Status:", response.status_code)
+        print(f"Response from wiki", response)
+        print(f"Species: {species}")
+        print(f"Status: {response.status_code}")
 
         if response.status_code != 200:
-            return None
+             print("Response body:")
+             print(response.text[:500])
+             return None
 
         data = response.json()
 
+        print("Thumbnail:", data.get("thumbnail"))
+        print("Image URL:", data.get("thumbnail", {}).get("source"))
+            
         return data.get("thumbnail", {}).get("source")
 
     except Exception as e:
-        print("ERROR:", e)
+        print(f"Image fetch error: {e}")
         return None
 
-def image_exists(url):
-    try:
-        r = requests.get(url, timeout=3)
-        return r.status_code == 200 and "image" in r.headers.get("Content-Type", "")
-    except:
-        return False
     
 # Header
 st.title("🐦 Pakshi AI")
@@ -243,7 +253,7 @@ st.header("🎵 Bird Audio Identification")
 
 audio_file = st.file_uploader(
     "Upload Bird Audio",
-    type=["mp3", "wav", "flac"],
+    type=["mp3", "wav", "flac","m4a"],
     key="audio_uploader"
 )
 
